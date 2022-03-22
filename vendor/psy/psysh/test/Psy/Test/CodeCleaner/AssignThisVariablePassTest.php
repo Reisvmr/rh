@@ -1,9 +1,9 @@
 <?php
 
 /*
- * This file is part of Psy Shell.
+ * This file is part of Psy Shell
  *
- * (c) 2012-2017 Justin Hileman
+ * (c) 2012-2014 Justin Hileman
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,15 +11,15 @@
 
 namespace Psy\Test\CodeCleaner;
 
-use PhpParser\NodeTraverser;
+use PHPParser_NodeTraverser as NodeTraverser;
 use Psy\CodeCleaner\AssignThisVariablePass;
 
 class AssignThisVariablePassTest extends CodeCleanerTestCase
 {
     public function setUp()
     {
-        $this->pass      = new AssignThisVariablePass();
-        $this->traverser = new NodeTraverser();
+        $this->pass      = new AssignThisVariablePass;
+        $this->traverser = new NodeTraverser;
         $this->traverser->addVisitor($this->pass);
     }
 

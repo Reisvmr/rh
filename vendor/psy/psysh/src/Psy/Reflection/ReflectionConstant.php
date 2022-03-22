@@ -1,9 +1,9 @@
 <?php
 
 /*
- * This file is part of Psy Shell.
+ * This file is part of Psy Shell
  *
- * (c) 2012-2017 Justin Hileman
+ * (c) 2012-2014 Justin Hileman
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -30,7 +30,7 @@ class ReflectionConstant implements \Reflector
      */
     public function __construct($class, $name)
     {
-        if (!$class instanceof \ReflectionClass) {
+        if (! $class instanceof \ReflectionClass) {
             $class = new \ReflectionClass($class);
         }
 
@@ -39,7 +39,7 @@ class ReflectionConstant implements \Reflector
 
         $constants = $class->getConstants();
         if (!array_key_exists($name, $constants)) {
-            throw new \InvalidArgumentException('Unknown constant: ' . $name);
+            throw new \InvalidArgumentException('Unknown constant: '.$name);
         }
 
         $this->value = $constants[$name];
@@ -52,19 +52,7 @@ class ReflectionConstant implements \Reflector
      */
     public function getDeclaringClass()
     {
-        $parent = $this->class;
-
-        // Since we don't have real reflection constants, we can't see where
-        // it's actually defined. Let's check for a constant that is also
-        // available on the parent class which has exactly the same value.
-        //
-        // While this isn't _technically_ correct, it's prolly close enough.
-        do {
-            $class = $parent;
-            $parent = $class->getParentClass();
-        } while ($parent && $parent->hasConstant($this->name) && $parent->getConstant($this->name) === $this->value);
-
-        return $class;
+        return $this->class;
     }
 
     /**
@@ -92,10 +80,12 @@ class ReflectionConstant implements \Reflector
      *
      * Currently returns null, because if it returns a file name the signature
      * formatter will barf.
+     *
+     * @return null
      */
     public function getFileName()
     {
-        return;
+        return null;
         // return $this->class->getFileName();
     }
 
@@ -103,6 +93,8 @@ class ReflectionConstant implements \Reflector
      * Get the code start line.
      *
      * @throws \RuntimeException
+     *
+     * @return void
      */
     public function getStartLine()
     {
@@ -113,6 +105,8 @@ class ReflectionConstant implements \Reflector
      * Get the code end line.
      *
      * @throws \RuntimeException
+     *
+     * @return void
      */
     public function getEndLine()
     {
@@ -133,6 +127,8 @@ class ReflectionConstant implements \Reflector
      * Export the constant? I don't think this is possible.
      *
      * @throws \RuntimeException
+     *
+     * @return void
      */
     public static function export()
     {

@@ -1,9 +1,9 @@
 <?php
 
 /*
- * This file is part of Psy Shell.
+ * This file is part of Psy Shell
  *
- * (c) 2012-2017 Justin Hileman
+ * (c) 2012-2014 Justin Hileman
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,10 +11,10 @@
 
 namespace Psy\CodeCleaner;
 
-use PhpParser\Node;
-use PhpParser\Node\Stmt\Class_;
-use PhpParser\Node\Stmt\ClassMethod;
-use PhpParser\Node\Stmt\Namespace_;
+use PHPParser_Node as Node;
+use PHPParser_Node_Stmt_Namespace as NamespaceStatement;
+use PHPParser_Node_Stmt_Class as ClassStatement;
+use PHPParser_Node_Stmt_ClassMethod as ClassMethod;
 use Psy\Exception\FatalErrorException;
 
 /**
@@ -45,15 +45,16 @@ class StaticConstructorPass extends CodeCleanerPass
     /**
      * Validate that the old-style constructor function is not static.
      *
-     * @throws FatalErrorException if the old-style constructor function is static
+     * @throws FatalErrorException if the old-style constructor function is static.
      *
      * @param Node $node
      */
     public function enterNode(Node $node)
     {
-        if ($node instanceof Namespace_) {
+        if ($node instanceof NamespaceStatement) {
             $this->namespace = isset($node->name) ? $node->name->parts : array();
-        } elseif ($node instanceof Class_) {
+        } elseif ($node instanceof ClassStatement) {
+
             // Bail early if this is PHP 5.3.3 and we have a namespaced class
             if (!empty($this->namespace) && $this->isPHP533) {
                 return;

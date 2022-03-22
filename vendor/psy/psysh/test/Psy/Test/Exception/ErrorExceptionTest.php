@@ -1,9 +1,9 @@
 <?php
 
 /*
- * This file is part of Psy Shell.
+ * This file is part of Psy Shell
  *
- * (c) 2012-2017 Justin Hileman
+ * (c) 2012-2014 Justin Hileman
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,14 +11,14 @@
 
 namespace Psy\Test\Exception;
 
-use Psy\Exception\ErrorException;
 use Psy\Exception\Exception;
+use Psy\Exception\ErrorException;
 
 class ErrorExceptionTest extends \PHPUnit_Framework_TestCase
 {
     public function testInstance()
     {
-        $e = new ErrorException();
+        $e = new ErrorException;
 
         $this->assertTrue($e instanceof Exception);
         $this->assertTrue($e instanceof \ErrorException);
@@ -50,10 +50,10 @@ class ErrorExceptionTest extends \PHPUnit_Framework_TestCase
         try {
             ErrorException::throwException($level, '{whot}', '{file}', '13');
         } catch (ErrorException $e) {
-            $this->assertContains('PHP ' . $type, $e->getMessage());
+            $this->assertContains('PHP '.$type, $e->getMessage());
             $this->assertContains('{whot}', $e->getMessage());
-            $this->assertContains('in {file}', $e->getMessage());
-            $this->assertContains('on line 13', $e->getMessage());
+            $this->assertContains('{file}', $e->getMessage());
+            $this->assertContains('13', $e->getMessage());
         }
     }
 
@@ -78,7 +78,7 @@ class ErrorExceptionTest extends \PHPUnit_Framework_TestCase
         try {
             trigger_error('{whot}', $level);
         } catch (ErrorException $e) {
-            $this->assertContains('PHP ' . $type, $e->getMessage());
+            $this->assertContains('PHP '.$type, $e->getMessage());
             $this->assertContains('{whot}', $e->getMessage());
         }
         restore_error_handler();

@@ -10,7 +10,7 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,N
 -- -----------------------------------------------------
 -- Schema rh
 -- -----------------------------------------------------
-DROP SCHEMA IF EXISTS `rh` ;
+-- DROP SCHEMA IF EXISTS `rh` ;
 
 -- -----------------------------------------------------
 -- Schema rh
@@ -21,7 +21,7 @@ USE `rh` ;
 -- -----------------------------------------------------
 -- Table `rh`.`acao`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `rh`.`acao` ;
+--DROP TABLE IF EXISTS `rh`.`acao` ;
 
 CREATE TABLE IF NOT EXISTS `rh`.`acao` (
   `id` INT NOT NULL AUTO_INCREMENT,
@@ -41,7 +41,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `rh`.`atestado`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `rh`.`atestado` ;
+--DROP TABLE IF EXISTS `rh`.`atestado` ;
 
 CREATE TABLE IF NOT EXISTS `rh`.`atestado` (
   `id` INT NOT NULL AUTO_INCREMENT,
@@ -74,7 +74,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `rh`.`auditoria`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `rh`.`auditoria` ;
+--DROP TABLE IF EXISTS `rh`.`auditoria` ;
 
 CREATE TABLE IF NOT EXISTS `rh`.`auditoria` (
   `id` INT NOT NULL AUTO_INCREMENT,
@@ -98,7 +98,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `rh`.`cid`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `rh`.`cid` ;
+--DROP TABLE IF EXISTS `rh`.`cid` ;
 
 CREATE TABLE IF NOT EXISTS `rh`.`cid` (
   `id` INT NOT NULL AUTO_INCREMENT,
@@ -114,7 +114,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `rh`.`empresa`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `rh`.`empresa` ;
+--DROP TABLE IF EXISTS `rh`.`empresa` ;
 
 CREATE TABLE IF NOT EXISTS `rh`.`empresa` (
   `id` INT NOT NULL AUTO_INCREMENT,
@@ -127,7 +127,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `rh`.`firewall`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `rh`.`firewall` ;
+--DROP TABLE IF EXISTS `rh`.`firewall` ;
 
 CREATE TABLE IF NOT EXISTS `rh`.`firewall` (
   `id` INT NOT NULL AUTO_INCREMENT,
@@ -143,7 +143,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `rh`.`funcao`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `rh`.`funcao` ;
+--DROP TABLE IF EXISTS `rh`.`funcao` ;
 
 CREATE TABLE IF NOT EXISTS `rh`.`funcao` (
   `id` INT NOT NULL AUTO_INCREMENT,
@@ -165,7 +165,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `rh`.`funcao_grupo`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `rh`.`funcao_grupo` ;
+--DROP TABLE IF EXISTS `rh`.`funcao_grupo` ;
 
 CREATE TABLE IF NOT EXISTS `rh`.`funcao_grupo` (
   `grupo_id` INT NOT NULL,
@@ -189,7 +189,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `rh`.`funcionario`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `rh`.`funcionario` ;
+--DROP TABLE IF EXISTS `rh`.`funcionario` ;
 
 CREATE TABLE IF NOT EXISTS `rh`.`funcionario` (
   `id` INT NOT NULL AUTO_INCREMENT,
@@ -227,7 +227,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `rh`.`grupo`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `rh`.`grupo` ;
+--DROP TABLE IF EXISTS `rh`.`grupo` ;
 
 CREATE TABLE IF NOT EXISTS `rh`.`grupo` (
   `id` INT NOT NULL AUTO_INCREMENT,
@@ -241,7 +241,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `rh`.`grupo_funcao`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `rh`.`grupo_funcao` ;
+--DROP TABLE IF EXISTS `rh`.`grupo_funcao` ;
 
 CREATE TABLE IF NOT EXISTS `rh`.`grupo_funcao` (
   `id` INT NOT NULL AUTO_INCREMENT,
@@ -254,7 +254,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `rh`.`medico`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `rh`.`medico` ;
+--DROP TABLE IF EXISTS `rh`.`medico` ;
 
 CREATE TABLE IF NOT EXISTS `rh`.`medico` (
   `id` INT NOT NULL AUTO_INCREMENT,
@@ -268,7 +268,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `rh`.`tipo_funcionario`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `rh`.`tipo_funcionario` ;
+--DROP TABLE IF EXISTS `rh`.`tipo_funcionario` ;
 
 CREATE TABLE IF NOT EXISTS `rh`.`tipo_funcionario` (
   `id` INT NOT NULL AUTO_INCREMENT,
@@ -280,7 +280,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `rh`.`usuario`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `rh`.`usuario` ;
+--DROP TABLE IF EXISTS `rh`.`usuario` ;
 
 CREATE TABLE IF NOT EXISTS `rh`.`usuario` (
   `id` INT NOT NULL AUTO_INCREMENT,

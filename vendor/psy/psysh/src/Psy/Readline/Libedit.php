@@ -1,9 +1,9 @@
 <?php
 
 /*
- * This file is part of Psy Shell.
+ * This file is part of Psy Shell
  *
- * (c) 2012-2017 Justin Hileman
+ * (c) 2012-2014 Justin Hileman
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,7 +11,7 @@
 
 namespace Psy\Readline;
 
-use Psy\Util\Str;
+use Psy\Util\String;
 
 /**
  * A Libedit-based Readline implementation.
@@ -22,10 +22,11 @@ use Psy\Util\Str;
  */
 class Libedit extends GNUReadline
 {
+
     /**
      * Let's emulate GNU Readline by manually reading and parsing the history file!
      *
-     * @return bool
+     * @return boolean
      */
     public static function isSupported()
     {
@@ -33,7 +34,7 @@ class Libedit extends GNUReadline
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function listHistory()
     {
@@ -62,7 +63,7 @@ class Libedit extends GNUReadline
      * if "\0" is found in an entry,
      * everything from it until the next line is a comment.
      *
-     * @param string $line The history line to parse
+     * @param string $line The history line to parse.
      *
      * @return string | null
      */
@@ -78,6 +79,6 @@ class Libedit extends GNUReadline
             $line = substr($line, 0, $pos);
         }
 
-        return ($line !== '') ? Str::unvis($line) : null;
+        return ($line !== '') ? String::unvis($line) : null;
     }
 }

@@ -1,9 +1,9 @@
 <?php
 
 /*
- * This file is part of Psy Shell.
+ * This file is part of Psy Shell
  *
- * (c) 2012-2017 Justin Hileman
+ * (c) 2012-2014 Justin Hileman
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,11 +11,11 @@
 
 namespace Psy\CodeCleaner;
 
-use PhpParser\Node;
-use PhpParser\Node\Expr\ConstFetch;
-use PhpParser\Node\Expr\Instanceof_;
-use PhpParser\Node\Scalar;
-use PhpParser\Node\Scalar\Encapsed;
+use PHPParser_Node as Node;
+use PHPParser_Node_Expr_Instanceof as InstanceOfNode;
+use PHPParser_Node_Scalar as Scalar;
+use PHPParser_Node_Scalar_Encapsed as EncapsedString;
+use PHPParser_Node_Expr_ConstFetch as ConstFetch;
 use Psy\Exception\FatalErrorException;
 
 /**
@@ -34,11 +34,11 @@ class InstanceOfPass extends CodeCleanerPass
      */
     public function enterNode(Node $node)
     {
-        if (!$node instanceof Instanceof_) {
+        if (!$node instanceof InstanceOfNode) {
             return;
         }
 
-        if (($node->expr instanceof Scalar && !$node->expr instanceof Encapsed) || $node->expr instanceof ConstFetch) {
+        if (($node->expr instanceof Scalar && !$node->expr instanceof EncapsedString) || $node->expr instanceof ConstFetch) {
             throw new FatalErrorException('instanceof expects an object instance, constant given');
         }
     }

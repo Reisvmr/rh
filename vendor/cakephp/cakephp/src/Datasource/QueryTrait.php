@@ -1,16 +1,16 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Datasource;
 
@@ -393,7 +393,7 @@ trait QueryTrait
      * $singleUser = $query->select(['id', 'username'])->first();
      * ```
      *
-     * @return mixed the first result from the ResultSet
+     * @return \Cake\Datasource\EntityInterface|array|null The first result from the ResultSet.
      */
     public function first()
     {
@@ -408,18 +408,19 @@ trait QueryTrait
      * Get the first result from the executing query or raise an exception.
      *
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When there is no first record.
-     * @return mixed The first result from the ResultSet.
+     * @return \Cake\Datasource\EntityInterface|array The first result from the ResultSet.
      */
     public function firstOrFail()
     {
         $entity = $this->first();
-        if ($entity) {
-            return $entity;
+        if (!$entity) {
+            throw new RecordNotFoundException(sprintf(
+                'Record not found in table "%s"',
+                $this->repository()->table()
+            ));
         }
-        throw new RecordNotFoundException(sprintf(
-            'Record not found in table "%s"',
-            $this->repository()->table()
-        ));
+
+        return $entity;
     }
 
     /**

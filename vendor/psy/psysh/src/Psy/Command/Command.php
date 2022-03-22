@@ -1,9 +1,9 @@
 <?php
 
 /*
- * This file is part of Psy Shell.
+ * This file is part of Psy Shell
  *
- * (c) 2012-2017 Justin Hileman
+ * (c) 2012-2014 Justin Hileman
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -14,10 +14,6 @@ namespace Psy\Command;
 use Psy\Shell;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command as BaseCommand;
-use Symfony\Component\Console\Helper\Table;
-use Symfony\Component\Console\Helper\TableHelper;
-use Symfony\Component\Console\Helper\TableStyle;
-use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * The Psy Shell base command.
@@ -47,7 +43,7 @@ abstract class Command extends BaseCommand
     {
         $messages = array(
             '<comment>Usage:</comment>',
-            ' ' . $this->getSynopsis(),
+            ' '.$this->getSynopsis(),
             '',
         );
 
@@ -65,7 +61,7 @@ abstract class Command extends BaseCommand
 
         if ($help = $this->getProcessedHelp()) {
             $messages[] = '<comment>Help:</comment>';
-            $messages[] = ' ' . str_replace("\n", "\n ", $help) . "\n";
+            $messages[] = ' '.str_replace("\n", "\n ", $help)."\n";
         }
 
         return implode("\n", $messages);
@@ -122,7 +118,7 @@ abstract class Command extends BaseCommand
      */
     private function aliasesAsText()
     {
-        return '<comment>Aliases:</comment> <info>' . implode(', ', $this->getAliases()) . '</info>' . PHP_EOL;
+        return '<comment>Aliases:</comment> <info>'.implode(', ', $this->getAliases()).'</info>'.PHP_EOL;
     }
 
     /**
@@ -145,7 +141,7 @@ abstract class Command extends BaseCommand
                     $default = '';
                 }
 
-                $description = str_replace("\n", "\n" . str_pad('', $max + 2, ' '), $argument->getDescription());
+                $description = str_replace("\n", "\n".str_pad('', $max + 2, ' '), $argument->getDescription());
 
                 $messages[] = sprintf(" <info>%-${max}s</info> %s%s", $argument->getName(), $description, $default);
             }
@@ -178,12 +174,11 @@ abstract class Command extends BaseCommand
                 }
 
                 $multiple = $option->isArray() ? '<comment> (multiple values allowed)</comment>' : '';
-                $description = str_replace("\n", "\n" . str_pad('', $max + 2, ' '), $option->getDescription());
+                $description = str_replace("\n", "\n".str_pad('', $max + 2, ' '), $option->getDescription());
 
                 $optionMax = $max - strlen($option->getName()) - 2;
-                $messages[] = sprintf(
-                    " <info>%s</info> %-${optionMax}s%s%s%s",
-                    '--' . $option->getName(),
+                $messages[] = sprintf(" <info>%s</info> %-${optionMax}s%s%s%s",
+                    '--'.$option->getName(),
                     $option->getShortcut() ? sprintf('(-%s) ', $option->getShortcut()) : '',
                     $description,
                     $default,
@@ -236,47 +231,5 @@ abstract class Command extends BaseCommand
         }
 
         return str_replace("\n", '', var_export($default, true));
-    }
-
-    /**
-     * Get a Table instance.
-     *
-     * Falls back to legacy TableHelper.
-     *
-     * @return Table|TableHelper
-     */
-    protected function getTable(OutputInterface $output)
-    {
-        if (!class_exists('Symfony\Component\Console\Helper\Table')) {
-            return $this->getTableHelper();
-        }
-
-        $style = new TableStyle();
-        $style
-            ->setVerticalBorderChar(' ')
-            ->setHorizontalBorderChar('')
-            ->setCrossingChar('');
-
-        $table = new Table($output);
-
-        return $table
-            ->setRows(array())
-            ->setStyle($style);
-    }
-
-    /**
-     * Legacy fallback for getTable.
-     *
-     * @return TableHelper
-     */
-    protected function getTableHelper()
-    {
-        $table = $this->getApplication()->getHelperSet()->get('table');
-
-        return $table
-            ->setRows(array())
-            ->setLayout(TableHelper::LAYOUT_BORDERLESS)
-            ->setHorizontalBorderChar('')
-            ->setCrossingChar('');
     }
 }

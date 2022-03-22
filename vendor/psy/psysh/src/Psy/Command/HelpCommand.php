@@ -1,9 +1,9 @@
 <?php
 
 /*
- * This file is part of Psy Shell.
+ * This file is part of Psy Shell
  *
- * (c) 2012-2017 Justin Hileman
+ * (c) 2012-2014 Justin Hileman
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -66,7 +66,10 @@ class HelpCommand extends Command
             // list available commands
             $commands = $this->getApplication()->all();
 
-            $table = $this->getTable($output);
+            $table = $this->getApplication()->getHelperSet()->get('table')
+                ->setLayout(TableHelper::LAYOUT_BORDERLESS)
+                ->setHorizontalBorderChar('')
+                ->setCrossingChar('');
 
             foreach ($commands as $name => $command) {
                 if ($name !== $command->getName()) {
@@ -86,13 +89,9 @@ class HelpCommand extends Command
                 ));
             }
 
-            $output->startPaging();
-            if ($table instanceof TableHelper) {
+            $output->page(function ($output) use ($table) {
                 $table->render($output);
-            } else {
-                $table->render();
-            }
-            $output->stopPaging();
+            });
         }
     }
 }

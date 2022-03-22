@@ -1,9 +1,9 @@
 <?php
 
 /*
- * This file is part of Psy Shell.
+ * This file is part of Psy Shell
  *
- * (c) 2012-2017 Justin Hileman
+ * (c) 2012-2014 Justin Hileman
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,9 +11,9 @@
 
 namespace Psy\CodeCleaner;
 
-use PhpParser\Node;
-use PhpParser\Node\Stmt\Class_;
-use PhpParser\Node\Stmt\ClassMethod;
+use PHPParser_Node as Node;
+use PHPParser_Node_Stmt_Class as ClassStmt;
+use PHPParser_Node_Stmt_ClassMethod as ClassMethod;
 use Psy\Exception\FatalErrorException;
 
 /**
@@ -21,17 +21,18 @@ use Psy\Exception\FatalErrorException;
  */
 class AbstractClassPass extends CodeCleanerPass
 {
+
     private $class;
     private $abstractMethods;
 
     /**
-     * @throws RuntimeException if the node is an abstract function with a body
+     * @throws RuntimeException if the node is an abstract function with a body.
      *
      * @param Node $node
      */
     public function enterNode(Node $node)
     {
-        if ($node instanceof Class_) {
+        if ($node instanceof ClassStmt) {
             $this->class = $node;
             $this->abstractMethods = array();
         } elseif ($node instanceof ClassMethod) {
@@ -47,13 +48,13 @@ class AbstractClassPass extends CodeCleanerPass
     }
 
     /**
-     * @throws RuntimeException if the node is a non-abstract class with abstract methods
+     * @throws RuntimeException if the node is a non-abstract class with abstract methods.
      *
      * @param Node $node
      */
     public function leaveNode(Node $node)
     {
-        if ($node instanceof Class_) {
+        if ($node instanceof ClassStmt) {
             $count = count($this->abstractMethods);
             if ($count > 0 && !$node->isAbstract()) {
                 throw new FatalErrorException(sprintf(
@@ -66,4 +67,5 @@ class AbstractClassPass extends CodeCleanerPass
             }
         }
     }
+
 }

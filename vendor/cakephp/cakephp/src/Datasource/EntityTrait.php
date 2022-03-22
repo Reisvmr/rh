@@ -1,16 +1,16 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         3.0.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Datasource;
 
@@ -420,7 +420,7 @@ trait EntityTrait
     /**
      * Sets hidden properties.
      *
-     * @param array $properties An array of properties to treat as virtual.
+     * @param array $properties An array of properties to hide from array exports.
      * @param bool $merge Merge the new properties with the existing. By default false.
      * @return $this
      */
@@ -753,7 +753,7 @@ trait EntityTrait
         if ($isDirty === false) {
             unset($this->_dirty[$property]);
 
-            return false;
+            return $this;
         }
 
         $this->_dirty[$property] = true;
@@ -1121,7 +1121,7 @@ trait EntityTrait
      * Stores whether or not a property value can be changed or set in this entity.
      * The special property `*` can also be marked as accessible or protected, meaning
      * that any other property specified before will take its value. For example
-     * `$entity->accessible('*', true)` means that any property not specified already
+     * `$entity->setAccess('*', true)` means that any property not specified already
      * will be accessible by default.
      *
      * You can also call this method with an array of properties, in which case they

@@ -1,9 +1,9 @@
 <?php
 
 /*
- * This file is part of Psy Shell.
+ * This file is part of Psy Shell
  *
- * (c) 2012-2017 Justin Hileman
+ * (c) 2012-2014 Justin Hileman
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,8 +11,6 @@
 
 namespace Psy\Command;
 
-use Psy\Configuration;
-use Psy\Exception\RuntimeException;
 use Psy\Formatter\CodeFormatter;
 use Psy\Formatter\SignatureFormatter;
 use Psy\Output\ShellOutput;
@@ -25,18 +23,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class ShowCommand extends ReflectingCommand
 {
-    private $colorMode;
-
-    /**
-     * @param null|string $colorMode (default: null)
-     */
-    public function __construct($colorMode = null)
-    {
-        $this->colorMode = $colorMode ?: Configuration::COLOR_MODE_AUTO;
-
-        return parent::__construct();
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -48,8 +34,7 @@ class ShowCommand extends ReflectingCommand
                 new InputArgument('value', InputArgument::REQUIRED, 'Function, class, instance, constant, method or property to show.'),
             ))
             ->setDescription('Show the code for an object, class, constant, method or property.')
-            ->setHelp(
-                <<<HELP
+            ->setHelp(<<<HELP
 Show the code for an object, class, constant, method or property.
 
 e.g.
@@ -66,14 +51,9 @@ HELP
     {
         list($value, $reflector) = $this->getTargetAndReflector($input->getArgument('value'));
 
-        // Set some magic local variables
-        $this->setCommandScopeVariables($reflector);
-
-        try {
-            $output->page(CodeFormatter::format($reflector, $this->colorMode), ShellOutput::OUTPUT_RAW);
-        } catch (RuntimeException $e) {
+        $output->page(function (ShellOutput $output) use ($reflector) {
             $output->writeln(SignatureFormatter::format($reflector));
-            throw $e;
-        }
+            $output->writeln(CodeFormatter::format($reflector), ShellOutput::OUTPUT_RAW);
+        });
     }
 }

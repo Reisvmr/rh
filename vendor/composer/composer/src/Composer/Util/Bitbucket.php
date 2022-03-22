@@ -44,7 +44,7 @@ class Bitbucket
     {
         $this->io = $io;
         $this->config = $config;
-        $this->process = $process ?: new ProcessExecutor;
+        $this->process = $process ?: new ProcessExecutor($io);
         $this->remoteFilesystem = $remoteFilesystem ?: Factory::createRemoteFilesystem($this->io, $config);
         $this->time = $time;
     }
@@ -109,7 +109,7 @@ class Bitbucket
                 return false;
             } elseif (in_array($e->getCode(), array(403, 401))) {
                 $this->io->writeError('<error>Invalid OAuth consumer provided.</error>');
-                $this->io->writeError('You can also add it manually later by using "composer config bitbucket-oauth.bitbucket.org <consumer-key> <consumer-secret>"');
+                $this->io->writeError('You can also add it manually later by using "composer config --global --auth bitbucket-oauth.bitbucket.org <consumer-key> <consumer-secret>"');
 
                 return false;
             }
@@ -135,7 +135,7 @@ class Bitbucket
             $this->io->writeError($message);
         }
 
-        $url = 'https://confluence.atlassian.com/bitbucket/oauth-on-bitbucket-cloud-238027431.html';
+        $url = 'https://support.atlassian.com/bitbucket-cloud/docs/use-oauth-on-bitbucket-cloud/';
         $this->io->writeError(sprintf('Follow the instructions on %s', $url));
         $this->io->writeError(sprintf('to create a consumer. It will be stored in "%s" for future use by Composer.', $this->config->getAuthConfigSource()->getName()));
         $this->io->writeError('Ensure you enter a "Callback URL" (http://example.com is fine) or it will not be possible to create an Access Token (this callback url will not be used by composer)');
@@ -144,7 +144,7 @@ class Bitbucket
 
         if (!$consumerKey) {
             $this->io->writeError('<warning>No consumer key given, aborting.</warning>');
-            $this->io->writeError('You can also add it manually later by using "composer config bitbucket-oauth.bitbucket.org <consumer-key> <consumer-secret>"');
+            $this->io->writeError('You can also add it manually later by using "composer config --global --auth bitbucket-oauth.bitbucket.org <consumer-key> <consumer-secret>"');
 
             return false;
         }
@@ -153,7 +153,7 @@ class Bitbucket
 
         if (!$consumerSecret) {
             $this->io->writeError('<warning>No consumer secret given, aborting.</warning>');
-            $this->io->writeError('You can also add it manually later by using "composer config bitbucket-oauth.bitbucket.org <consumer-key> <consumer-secret>"');
+            $this->io->writeError('You can also add it manually later by using "composer config --global --auth bitbucket-oauth.bitbucket.org <consumer-key> <consumer-secret>"');
 
             return false;
         }

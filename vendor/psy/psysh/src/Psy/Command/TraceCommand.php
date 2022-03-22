@@ -1,9 +1,9 @@
 <?php
 
 /*
- * This file is part of Psy Shell.
+ * This file is part of Psy Shell
  *
- * (c) 2012-2017 Justin Hileman
+ * (c) 2012-2014 Justin Hileman
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,50 +11,30 @@
 
 namespace Psy\Command;
 
-use Psy\Input\FilterOptions;
 use Psy\Output\ShellOutput;
-use Symfony\Component\Console\Formatter\OutputFormatter;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Formatter\OutputFormatter;
 
 /**
  * Show the current stack trace.
  */
 class TraceCommand extends Command
 {
-    protected $filter;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function __construct($name = null)
-    {
-        $this->filter = new FilterOptions();
-
-        parent::__construct($name);
-    }
-
     /**
      * {@inheritdoc}
      */
     protected function configure()
     {
-        list($grep, $insensitive, $invert) = FilterOptions::getOptions();
-
         $this
             ->setName('trace')
             ->setDefinition(array(
                 new InputOption('include-psy', 'p', InputOption::VALUE_NONE,     'Include Psy in the call stack.'),
                 new InputOption('num',         'n', InputOption::VALUE_REQUIRED, 'Only include NUM lines.'),
-
-                $grep,
-                $insensitive,
-                $invert,
             ))
             ->setDescription('Show the current call stack.')
-            ->setHelp(
-                <<<'HELP'
+            ->setHelp(<<<HELP
 Show the current call stack.
 
 Optionally, include PsySH in the call stack by passing the <info>--include-psy</info> option.
@@ -71,9 +51,8 @@ HELP
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->filter->bind($input);
-        $trace = $this->getBacktrace(new \Exception(), $input->getOption('num'), $input->getOption('include-psy'));
-        $output->page($trace, ShellOutput::NUMBER_LINES);
+        $trace = $this->getBacktrace(new \Exception, $input->getOption('num'), $input->getOption('include-psy'));
+        $output->page($trace, ShellOutput::NUMBER_LINES | ShellOutput::OUTPUT_RAW);
     }
 
     /**
@@ -82,11 +61,11 @@ HELP
      * Optionally limit the number of rows to include with $count, and exclude
      * Psy from the trace.
      *
-     * @param \Exception $e          The exception with a backtrace
+     * @param \Exception $e          The exception with a backtrace.
      * @param int        $count      (default: PHP_INT_MAX)
      * @param bool       $includePsy (default: true)
      *
-     * @return array Formatted stacktrace lines
+     * @return array Formatted stacktrace lines.
      */
     protected function getBacktrace(\Exception $e, $count = null, $includePsy = true)
     {
@@ -103,8 +82,8 @@ HELP
         $trace = $e->getTrace();
         array_unshift($trace, array(
             'function' => '',
-            'file'     => $e->getFile() !== null ? $e->getFile() : 'n/a',
-            'line'     => $e->getLine() !== null ? $e->getLine() : 'n/a',
+            'file'     => $e->getFile() != null ? $e->getFile() : 'n/a',
+            'line'     => $e->getLine() != null ? $e->getLine() : 'n/a',
             'args'     => array(),
         ));
 
@@ -125,13 +104,8 @@ HELP
             $file     = isset($trace[$i]['file']) ? $this->replaceCwd($cwd, $trace[$i]['file']) : 'n/a';
             $line     = isset($trace[$i]['line']) ? $trace[$i]['line'] : 'n/a';
 
-            // Skip any lines that don't match our filter options
-            if (!$this->filter->match(sprintf('%s%s%s() at %s:%s', $class, $type, $function, $file, $line))) {
-                continue;
-            }
-
             $lines[] = sprintf(
-                ' <class>%s</class>%s%s() at <info>%s:%s</info>',
+                ' %s%s%s() at <info>%s:%s</info>',
                 OutputFormatter::escape($class),
                 OutputFormatter::escape($type),
                 OutputFormatter::escape($function),
@@ -156,7 +130,7 @@ HELP
         if ($cwd === false) {
             return $file;
         } else {
-            return preg_replace('/^' . preg_quote($cwd, '/') . '/', '', $file);
+            return preg_replace('/^'.preg_quote($cwd, '/').'/', '', $file);
         }
     }
 }

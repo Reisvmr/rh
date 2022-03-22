@@ -1,9 +1,9 @@
 <?php
 
 /*
- * This file is part of Psy Shell.
+ * This file is part of Psy Shell
  *
- * (c) 2012-2017 Justin Hileman
+ * (c) 2012-2014 Justin Hileman
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -29,7 +29,7 @@ class ProcOutputPager extends StreamOutput implements OutputPager
     private $cmd;
 
     /**
-     * Constructor.
+     * Constructor
      *
      * @param StreamOutput $output
      * @param string       $cmd    Pager process command (default: 'less -R -S -F -X')
@@ -43,15 +43,15 @@ class ProcOutputPager extends StreamOutput implements OutputPager
     /**
      * Writes a message to the output.
      *
-     * @param string $message A message to write to the output
-     * @param bool   $newline Whether to add a newline or not
+     * @param string  $message A message to write to the output
+     * @param Boolean $newline Whether to add a newline or not
      *
      * @throws \RuntimeException When unable to write output (should never happen)
      */
     public function doWrite($message, $newline)
     {
         $pipe = $this->getPipe();
-        if (false === @fwrite($pipe, $message . ($newline ? PHP_EOL : ''))) {
+        if (false === @fwrite($pipe, $message.($newline ? PHP_EOL : ''))) {
             // @codeCoverageIgnoreStart
             // should never happen
             throw new \RuntimeException('Unable to write output.');

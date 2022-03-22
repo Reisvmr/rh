@@ -53,3 +53,34 @@ possibilidade de impressão das mesmas informações.
 ## Instalação
 
 O sistema deve ser instalado em um provedor PHP e rodado sobre o banco de dados MySQL. O mesmo pode ser baixado [por aqui](https://github.com/coqueiralmg/rh/releases). Além disso, é preciso imputar os dados padrão de acesso a usuário, que pode ser solicitado pela equipe responsável pelo desenvolvimento.
+
+
+## Package Included
+- nginx (1.8.0)
+- php-fpm (5.6.15)
+- mysql (mariadb 10.1.8)
+- git (2.6.3)
+- composer
+
+## Build
+
+```
+docker build -t jobdiogenes/rh-publico-php .
+```
+
+## RUN
+
+```
+docker run -d \
+  --name nginx-php-mysql \
+  -p 80:80 \
+  -v $PWD/data:/var/lib/mysql \
+  -v $PWD/logs:/data/logs \
+  -v $PWD:/data/htdocs \
+  ball6847/nginx-php-mysql
+```
+
+## CREDITOS
+
+- https://github.com/TrafeX/docker-php-nginx/
+- https://github.com/geshan/docker-php-composer-alpine

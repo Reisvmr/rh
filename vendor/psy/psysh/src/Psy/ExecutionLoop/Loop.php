@@ -1,9 +1,9 @@
 <?php
 
 /*
- * This file is part of Psy Shell.
+ * This file is part of Psy Shell
  *
- * (c) 2012-2017 Justin Hileman
+ * (c) 2012-2014 Justin Hileman
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -12,24 +12,16 @@
 namespace Psy\ExecutionLoop;
 
 use Psy\Configuration;
-use Psy\Exception\BreakException;
-use Psy\Exception\ErrorException;
-use Psy\Exception\ThrowUpException;
-use Psy\Exception\TypeErrorException;
 use Psy\Shell;
+use Psy\Exception\BreakException;
 
 /**
  * The Psy Shell execution loop.
  */
 class Loop
 {
-    const NOOP_INPUT = 'return null;';
-
     /**
-     * Loop constructor.
-     *
-     * The non-forking loop doesn't have much use for Configuration, so we'll
-     * just ignore it.
+     * The non-forking loop doesn't have much use for Configuration :)
      *
      * @param Configuration $config
      */
@@ -40,8 +32,6 @@ class Loop
 
     /**
      * Run the execution loop.
-     *
-     * @throws ThrowUpException if thrown by the `throw-up` command
      *
      * @param Shell $shell
      */
@@ -60,7 +50,7 @@ class Loop
             restore_error_handler();
             unset($__psysh_include__);
 
-            extract($__psysh__->getScopeVariables(false));
+            extract($__psysh__->getScopeVariables());
 
             do {
                 $__psysh__->beforeLoop();
@@ -71,27 +61,16 @@ class Loop
                     $__psysh__->getInput();
 
                     // evaluate the current code buffer
-                    ob_start(
-                        array($__psysh__, 'writeStdout'),
-                        version_compare(PHP_VERSION, '5.4', '>=') ? 1 : 2
-                    );
-
-                    // Let PsySH inject some magic variables back into the
-                    // shell scope... things like $__class, and $__file set by
-                    // reflection commands
-                    extract($__psysh__->getSpecialScopeVariables(false));
-
-                    // And unset any magic variables which are no longer needed
-                    foreach ($__psysh__->getUnusedCommandScopeVariableNames() as $__psysh_var_name__) {
-                        unset($$__psysh_var_name__, $__psysh_var_name__);
-                    }
+                    ob_start();
 
                     set_error_handler(array($__psysh__, 'handleError'));
-                    $_ = eval($__psysh__->flushCode() ?: Loop::NOOP_INPUT);
+                    $_ = eval($__psysh__->flushCode());
                     restore_error_handler();
 
-                    ob_end_flush();
+                    $__psysh_out__ = ob_get_contents();
+                    ob_end_clean();
 
+                    $__psysh__->writeStdout($__psysh_out__);
                     $__psysh__->writeReturnValue($_);
                 } catch (BreakException $_e) {
                     restore_error_handler();
@@ -101,26 +80,6 @@ class Loop
                     $__psysh__->writeException($_e);
 
                     return;
-                } catch (ThrowUpException $_e) {
-                    restore_error_handler();
-                    if (ob_get_level() > 0) {
-                        ob_end_clean();
-                    }
-                    $__psysh__->writeException($_e);
-
-                    throw $_e;
-                } catch (\TypeError $_e) {
-                    restore_error_handler();
-                    if (ob_get_level() > 0) {
-                        ob_end_clean();
-                    }
-                    $__psysh__->writeException(TypeErrorException::fromTypeError($_e));
-                } catch (\Error $_e) {
-                    restore_error_handler();
-                    if (ob_get_level() > 0) {
-                        ob_end_clean();
-                    }
-                    $__psysh__->writeException(ErrorException::fromError($_e));
                 } catch (\Exception $_e) {
                     restore_error_handler();
                     if (ob_get_level() > 0) {
@@ -129,17 +88,25 @@ class Loop
                     $__psysh__->writeException($_e);
                 }
 
+                // a bit of housekeeping
+                unset($__psysh_out__);
                 $__psysh__->afterLoop();
             } while (true);
         };
 
         // bind the closure to $this from the shell scope variables...
-        if (self::bindLoop()) {
-            $that = $shell->getBoundObject();
+        if (version_compare(PHP_VERSION, '5.4', '>=')) {
+            $that = null;
+            try {
+                $that = $shell->getScopeVariable('this');
+            } catch (\InvalidArgumentException $e) {
+                // well, it was worth a shot
+            }
+
             if (is_object($that)) {
                 $loop = $loop->bindTo($that, get_class($that));
             } else {
-                $loop = $loop->bindTo(null, null);
+                $loop = $loop->bindTo(null);
             }
         }
 
@@ -166,21 +133,5 @@ class Loop
     public function afterLoop()
     {
         // no-op
-    }
-
-    /**
-     * Decide whether to bind the execution loop.
-     *
-     * @return bool
-     */
-    protected static function bindLoop()
-    {
-        // skip binding on HHVM <= 3.5.0
-        // see https://github.com/facebook/hhvm/issues/1203
-        if (defined('HHVM_VERSION')) {
-            return version_compare(HHVM_VERSION, '3.5.0', '>=');
-        }
-
-        return version_compare(PHP_VERSION, '5.4', '>=');
     }
 }

@@ -1,9 +1,9 @@
 <?php
 
 /*
- * This file is part of Psy Shell.
+ * This file is part of Psy Shell
  *
- * (c) 2012-2017 Justin Hileman
+ * (c) 2012-2014 Justin Hileman
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,10 +11,10 @@
 
 namespace Psy\CodeCleaner;
 
-use PhpParser\Node;
-use PhpParser\Node\Name;
-use PhpParser\Node\Name\FullyQualified as FullyQualifiedName;
-use PhpParser\Node\Stmt\Namespace_;
+use PHPParser_Node as Node;
+use PHPParser_Node_Name as Name;
+use PHPParser_Node_Name_FullyQualified as FullyQualifiedName;
+use PHPParser_Node_Stmt_Namespace as NamespaceStatement;
 
 /**
  * Abstract namespace-aware code cleaner pass.
@@ -25,10 +25,10 @@ abstract class NamespaceAwarePass extends CodeCleanerPass
     protected $currentScope;
 
     /**
-     * @todo should this be final? Extending classes should be sure to either
+     * TODO: should this be final? Extending classes should be sure to either
      * use afterTraverse or call parent::beforeTraverse() when overloading.
      *
-     * Reset the namespace and the current scope before beginning analysis
+     * Reset the namespace and the current scope before beginning analysis.
      */
     public function beforeTraverse(array $nodes)
     {
@@ -37,14 +37,14 @@ abstract class NamespaceAwarePass extends CodeCleanerPass
     }
 
     /**
-     * @todo should this be final? Extending classes should be sure to either use
-     * leaveNode or call parent::enterNode() when overloading
+     * TODO: should this be final? Extending classes should be sure to either use
+     * leaveNode or call parent::enterNode() when overloading.
      *
      * @param Node $node
      */
     public function enterNode(Node $node)
     {
-        if ($node instanceof Namespace_) {
+        if ($node instanceof NamespaceStatement) {
             $this->namespace = isset($node->name) ? $node->name->parts : array();
         }
     }

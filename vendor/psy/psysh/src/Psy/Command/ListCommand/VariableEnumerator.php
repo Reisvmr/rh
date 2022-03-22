@@ -1,9 +1,9 @@
 <?php
 
 /*
- * This file is part of Psy Shell.
+ * This file is part of Psy Shell
  *
- * (c) 2012-2017 Justin Hileman
+ * (c) 2012-2014 Justin Hileman
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,8 +11,8 @@
 
 namespace Psy\Command\ListCommand;
 
+use Psy\Presenter\PresenterManager;
 use Psy\Context;
-use Psy\VarDumper\Presenter;
 use Symfony\Component\Console\Input\InputInterface;
 
 /**
@@ -20,11 +20,7 @@ use Symfony\Component\Console\Input\InputInterface;
  */
 class VariableEnumerator extends Enumerator
 {
-    // n.b. this array is the order in which special variables will be listed
-    private static $specialNames = array(
-        '_', '_e', '__function', '__method', '__class', '__namespace', '__file', '__line', '__dir',
-    );
-
+    private static $specialVars = array('_', '_e');
     private $context;
 
     /**
@@ -33,13 +29,13 @@ class VariableEnumerator extends Enumerator
      * Unlike most other enumerators, the Variable Enumerator needs access to
      * the current scope variables, so we need to pass it a Context instance.
      *
-     * @param Presenter $presenter
-     * @param Context   $context
+     * @param PresenterManager $presenterManager
+     * @param Context          $context
      */
-    public function __construct(Presenter $presenter, Context $context)
+    public function __construct(PresenterManager $presenterManager, Context $context)
     {
         $this->context = $context;
-        parent::__construct($presenter);
+        parent::__construct($presenterManager);
     }
 
     /**
@@ -72,7 +68,7 @@ class VariableEnumerator extends Enumerator
     /**
      * Get scope variables.
      *
-     * @param bool $showAll Include special variables (e.g. $_)
+     * @param boolean $showAll Include special variables (e.g. $_).
      *
      * @return array
      */
@@ -80,28 +76,23 @@ class VariableEnumerator extends Enumerator
     {
         $scopeVars = $this->context->getAll();
         uksort($scopeVars, function ($a, $b) {
-            $aIndex = array_search($a, self::$specialNames);
-            $bIndex = array_search($b, self::$specialNames);
-
-            if ($aIndex !== false) {
-                if ($bIndex !== false) {
-                    return $aIndex - $bIndex;
-                }
-
+            if ($a == '_e') {
                 return 1;
-            }
-
-            if ($bIndex !== false) {
+            } elseif ($b == '_e') {
                 return -1;
+            } elseif ($a == '_') {
+                return 1;
+            } elseif ($b == '_') {
+                return -1;
+            } else {
+                // TODO: this should be natcasesort
+                return strcasecmp($a, $b);
             }
-
-            // @todo this should be natcasesort
-            return strcasecmp($a, $b);
         });
 
         $ret = array();
         foreach ($scopeVars as $name => $val) {
-            if (!$showAll && in_array($name, self::$specialNames)) {
+            if (!$showAll && in_array($name, self::$specialVars)) {
                 continue;
             }
 
@@ -109,6 +100,7 @@ class VariableEnumerator extends Enumerator
         }
 
         return $ret;
+
     }
 
     /**
@@ -127,8 +119,8 @@ class VariableEnumerator extends Enumerator
                 $fname = '$' . $name;
                 $ret[$fname] = array(
                     'name'  => $fname,
-                    'style' => in_array($name, self::$specialNames) ? self::IS_PRIVATE : self::IS_PUBLIC,
-                    'value' => $this->presentRef($val),
+                    'style' => in_array($name, self::$specialVars) ? self::IS_PRIVATE : self::IS_PUBLIC,
+                    'value' => $this->presentRef($val), // TODO: add types to variable signatures
                 );
             }
         }

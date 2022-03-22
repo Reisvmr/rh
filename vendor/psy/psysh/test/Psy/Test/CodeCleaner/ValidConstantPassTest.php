@@ -1,9 +1,9 @@
 <?php
 
 /*
- * This file is part of Psy Shell.
+ * This file is part of Psy Shell
  *
- * (c) 2012-2017 Justin Hileman
+ * (c) 2012-2014 Justin Hileman
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -17,7 +17,7 @@ class ValidConstantPassTest extends CodeCleanerTestCase
 {
     public function setUp()
     {
-        $this->setPass(new ValidConstantPass());
+        $this->setPass(new ValidConstantPass);
     }
 
     /**
@@ -33,11 +33,7 @@ class ValidConstantPassTest extends CodeCleanerTestCase
     public function getInvalidReferences()
     {
         return array(
-            array('Foo\BAR'),
-
-            // class constant fetch
-            array('Psy\Test\CodeCleaner\ValidConstantPassTest::FOO'),
-            array('DateTime::BACON'),
+            array('Foo\BAR;'),
         );
     }
 
@@ -53,14 +49,7 @@ class ValidConstantPassTest extends CodeCleanerTestCase
     public function getValidReferences()
     {
         return array(
-            array('PHP_EOL'),
-
-            // class constant fetch
-            array('NotAClass::FOO'),
-            array('DateTime::ATOM'),
-            array('$a = new DateTime; $a::ATOM'),
-            array('DateTime::class'),
-            array('$a = new DateTime; $a::class'),
+            array('PHP_EOL;')
         );
     }
 }

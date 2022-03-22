@@ -1,16 +1,16 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
  * @since         0.10.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Network;
 
@@ -108,7 +108,9 @@ class Session
             $sessionConfig['ini']['session.name'] = $sessionConfig['cookie'];
         }
 
-        if (!empty($sessionConfig['handler'])) {
+        // In PHP7.1.0+ session.save_handler can't be set to user by the user.
+        // https://github.com/php/php-src/blob/master/ext/session/session.c#L559
+        if (!empty($sessionConfig['handler']) && version_compare(PHP_VERSION, '7.1.0', '<=')) {
             $sessionConfig['ini']['session.save_handler'] = 'user';
         }
 
@@ -283,12 +285,12 @@ class Session
      */
     public function options(array $options)
     {
-        if (session_status() === \PHP_SESSION_ACTIVE) {
+        if (session_status() === \PHP_SESSION_ACTIVE || headers_sent()) {
             return;
         }
 
         foreach ($options as $setting => $value) {
-            if (ini_set($setting, $value) === false) {
+            if (ini_set($setting, (string)$value) === false) {
                 throw new RuntimeException(
                     sprintf('Unable to configure the session, setting %s failed.', $setting)
                 );
@@ -371,7 +373,7 @@ class Session
      * Returns given session variable, or all of them, if no parameters given.
      *
      * @param string|null $name The name of the session variable (or a path as sent to Hash.extract)
-     * @return string|null The value of the session variable, null if session not available,
+     * @return string|array|null The value of the session variable, null if session not available,
      *   session not started, or provided name not found in the session.
      */
     public function read($name = null)
@@ -453,7 +455,7 @@ class Session
      */
     public function id($id = null)
     {
-        if ($id !== null) {
+        if ($id !== null && !headers_sent()) {
             session_id($id);
         }
 
@@ -538,7 +540,8 @@ class Session
     {
         return !ini_get('session.use_cookies')
             || isset($_COOKIE[session_name()])
-            || $this->_isCLI;
+            || $this->_isCLI
+            || (ini_get('session.use_trans_sid') && isset($_GET[session_name()]));
     }
 
     /**

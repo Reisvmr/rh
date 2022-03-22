@@ -1,9 +1,9 @@
 <?php
 
 /*
- * This file is part of Psy Shell.
+ * This file is part of Psy Shell
  *
- * (c) 2012-2017 Justin Hileman
+ * (c) 2012-2014 Justin Hileman
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,9 +11,6 @@
 
 namespace Psy\Formatter;
 
-use JakubOnderka\PhpConsoleHighlighter\Highlighter;
-use Psy\Configuration;
-use Psy\ConsoleColorFactory;
 use Psy\Exception\RuntimeException;
 
 /**
@@ -24,53 +21,29 @@ class CodeFormatter implements Formatter
     /**
      * Format the code represented by $reflector.
      *
-     * @param \Reflector  $reflector
-     * @param null|string $colorMode (default: null)
+     * @param \Reflector $reflector
      *
      * @return string formatted code
      */
-    public static function format(\Reflector $reflector, $colorMode = null)
+    public static function format(\Reflector $reflector)
     {
-        if (!self::isReflectable($reflector)) {
-            throw new RuntimeException('Source code unavailable.');
-        }
-
-        $colorMode = $colorMode ?: Configuration::COLOR_MODE_AUTO;
-
-        if ($reflector instanceof \ReflectionGenerator) {
-            $reflector = $reflector->getFunction();
-        }
-
         if ($fileName = $reflector->getFileName()) {
             if (!is_file($fileName)) {
                 throw new RuntimeException('Source code unavailable.');
             }
 
             $file  = file_get_contents($fileName);
-            $start = $reflector->getStartLine();
+            $lines = preg_split('/\r?\n/', $file);
+
+            $start = $reflector->getStartLine() - 1;
             $end   = $reflector->getEndLine() - $start;
+            $code  = array_slice($lines, $start, $end);
 
-            $factory = new ConsoleColorFactory($colorMode);
-            $colors = $factory->getConsoleColor();
-            $highlighter = new Highlighter($colors);
-
-            return $highlighter->getCodeSnippet($file, $start, 0, $end);
+            // no need to escape this bad boy, since (for now) it's being output raw.
+            // return OutputFormatter::escape(implode(PHP_EOL, $code));
+            return implode(PHP_EOL, $code);
         } else {
             throw new RuntimeException('Source code unavailable.');
         }
-    }
-
-    /**
-     * Check whether a Reflector instance is reflectable by this formatter.
-     *
-     * @param \Reflector $reflector
-     *
-     * @return bool
-     */
-    private static function isReflectable(\Reflector $reflector)
-    {
-        return $reflector instanceof \ReflectionClass ||
-            $reflector instanceof \ReflectionFunctionAbstract ||
-            $reflector instanceof \ReflectionGenerator;
     }
 }

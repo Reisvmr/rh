@@ -1,9 +1,9 @@
 <?php
 
 /*
- * This file is part of Psy Shell.
+ * This file is part of Psy Shell
  *
- * (c) 2012-2017 Justin Hileman
+ * (c) 2012-2014 Justin Hileman
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,9 +11,8 @@
 
 namespace Psy\Formatter;
 
-use Psy\Reflection\ReflectionConstant;
-use Psy\Reflection\ReflectionLanguageConstruct;
 use Psy\Util\Json;
+use Psy\Reflection\ReflectionConstant;
 use Symfony\Component\Console\Formatter\OutputFormatter;
 
 /**
@@ -28,13 +27,12 @@ class SignatureFormatter implements Formatter
      *
      * @param \Reflector $reflector
      *
-     * @return string Formatted signature
+     * @return string Formatted signature.
      */
     public static function format(\Reflector $reflector)
     {
         switch (true) {
             case $reflector instanceof \ReflectionFunction:
-            case $reflector instanceof ReflectionLanguageConstruct:
                 return self::formatFunction($reflector);
 
             // this case also covers \ReflectionObject:
@@ -51,7 +49,7 @@ class SignatureFormatter implements Formatter
                 return self::formatProperty($reflector);
 
             default:
-                throw new \InvalidArgumentException('Unexpected Reflector class: ' . get_class($reflector));
+                throw new \InvalidArgumentException('Unexpected Reflector class: '.get_class($reflector));
         }
     }
 
@@ -60,7 +58,7 @@ class SignatureFormatter implements Formatter
      *
      * @param \Reflector $reflector
      *
-     * @return string Formatted name
+     * @return string Formatted name.
      */
     public static function formatName(\Reflector $reflector)
     {
@@ -74,7 +72,7 @@ class SignatureFormatter implements Formatter
      *
      * @param \Reflector $reflector
      *
-     * @return string Formatted modifiers
+     * @return string Formatted modifiers.
      */
     private static function formatModifiers(\Reflector $reflector)
     {
@@ -88,7 +86,7 @@ class SignatureFormatter implements Formatter
      *
      * @param \ReflectionClass $reflector
      *
-     * @return string Formatted signature
+     * @return string Formatted signature.
      */
     private static function formatClass(\ReflectionClass $reflector)
     {
@@ -113,8 +111,6 @@ class SignatureFormatter implements Formatter
 
         $interfaces = $reflector->getInterfaceNames();
         if (!empty($interfaces)) {
-            sort($interfaces);
-
             $chunks[] = 'implements';
             $chunks[] = implode(', ', array_map(function ($name) {
                 return sprintf('<class>%s</class>', $name);
@@ -129,7 +125,7 @@ class SignatureFormatter implements Formatter
      *
      * @param ReflectionConstant $reflector
      *
-     * @return string Formatted signature
+     * @return string Formatted signature.
      */
     private static function formatConstant(ReflectionConstant $reflector)
     {
@@ -147,7 +143,6 @@ class SignatureFormatter implements Formatter
 
     /**
      * Helper for getting output style for a given value's type.
-     *
      * @param mixed $value
      *
      * @return string
@@ -170,7 +165,7 @@ class SignatureFormatter implements Formatter
      *
      * @param \ReflectionProperty $reflector
      *
-     * @return string Formatted signature
+     * @return string Formatted signature.
      */
     private static function formatProperty(\ReflectionProperty $reflector)
     {
@@ -186,7 +181,7 @@ class SignatureFormatter implements Formatter
      *
      * @param \ReflectionFunction $reflector
      *
-     * @return string Formatted signature
+     * @return string Formatted signature.
      */
     private static function formatFunction(\ReflectionFunctionAbstract $reflector)
     {
@@ -203,7 +198,7 @@ class SignatureFormatter implements Formatter
      *
      * @param \ReflectionMethod $reflector
      *
-     * @return string Formatted signature
+     * @return string Formatted signature.
      */
     private static function formatMethod(\ReflectionMethod $reflector)
     {
@@ -238,7 +233,7 @@ class SignatureFormatter implements Formatter
                 // come to think of it, the only time I've seen this is with the intl extension.
 
                 // Hax: we'll try to extract it :P
-                $chunks = explode('$' . $param->getName(), (string) $param);
+                $chunks = explode('$'.$param->getName(), (string) $param);
                 $chunks = explode(' ', trim($chunks[0]));
                 $guess  = end($chunks);
 

@@ -13,8 +13,8 @@ namespace Symfony\Component\Console\Tests\Input;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputOption;
 
 class InputTest extends TestCase
@@ -129,13 +129,5 @@ class InputTest extends TestCase
         $this->assertTrue($input->isInteractive(), '->isInteractive() returns whether the input should be interactive or not');
         $input->setInteractive(false);
         $this->assertFalse($input->isInteractive(), '->setInteractive() changes the interactive flag');
-    }
-
-    public function testSetGetStream()
-    {
-        $input = new ArrayInput(array());
-        $stream = fopen('php://memory', 'r+', false);
-        $input->setStream($stream);
-        $this->assertSame($stream, $input->getStream());
     }
 }

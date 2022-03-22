@@ -1,9 +1,9 @@
 <?php
 
 /*
- * This file is part of Psy Shell.
+ * This file is part of Psy Shell
  *
- * (c) 2012-2017 Justin Hileman
+ * (c) 2012-2014 Justin Hileman
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,11 +11,10 @@
 
 namespace Psy\Test;
 
-use Psy\Configuration;
 use Psy\Exception\ErrorException;
 use Psy\Exception\ParseErrorException;
 use Psy\Shell;
-use Psy\TabCompletion\Matcher\ClassMethodsMatcher;
+use Psy\Configuration;
 use Symfony\Component\Console\Output\StreamOutput;
 
 class ShellTest extends \PHPUnit_Framework_TestCase
@@ -33,13 +32,13 @@ class ShellTest extends \PHPUnit_Framework_TestCase
     {
         $one       = 'banana';
         $two       = 123;
-        $three     = new \StdClass();
+        $three     = new \StdClass;
         $__psysh__ = 'ignore this';
         $_         = 'ignore this';
         $_e        = 'ignore this';
 
-        $shell = new Shell($this->getConfig());
-        $shell->setScopeVariables(compact('one', 'two', 'three', '__psysh__', '_', '_e', 'this'));
+        $shell = new Shell;
+        $shell->setScopeVariables(compact('one', 'two', 'three', '__psysh__', '_', '_e'));
 
         $this->assertNotContains('__psysh__', $shell->getScopeVariableNames());
         $this->assertEquals(array('one', 'two', 'three', '_'), $shell->getScopeVariableNames());
@@ -50,12 +49,6 @@ class ShellTest extends \PHPUnit_Framework_TestCase
 
         $shell->setScopeVariables(array());
         $this->assertEquals(array('_'), $shell->getScopeVariableNames());
-
-        $shell->setBoundObject($this);
-        $this->assertEquals(array('_', 'this'), $shell->getScopeVariableNames());
-        $this->assertSame($this, $shell->getScopeVariable('this'));
-        $this->assertEquals(array('_' => null), $shell->getScopeVariables(false));
-        $this->assertEquals(array('_' => null, 'this' => $this), $shell->getScopeVariables());
     }
 
     /**
@@ -63,14 +56,14 @@ class ShellTest extends \PHPUnit_Framework_TestCase
      */
     public function testUnknownScopeVariablesThrowExceptions()
     {
-        $shell = new Shell($this->getConfig());
+        $shell = new Shell;
         $shell->setScopeVariables(array('foo' => 'FOO', 'bar' => 1));
         $shell->getScopeVariable('baz');
     }
 
     public function testIncludes()
     {
-        $config = $this->getConfig(array('configFile' => __DIR__ . '/../../fixtures/empty.php'));
+        $config = new Configuration(array('configFile' => '(ignore user config)'));
 
         $shell = new Shell($config);
         $this->assertEmpty($shell->getIncludes());
@@ -80,9 +73,9 @@ class ShellTest extends \PHPUnit_Framework_TestCase
 
     public function testIncludesConfig()
     {
-        $config = $this->getConfig(array(
+        $config = new Configuration(array(
             'defaultIncludes' => array('/file.php'),
-            'configFile'      => __DIR__ . '/../../fixtures/empty.php',
+            'configFile'      => '(ignore user config)'
         ));
 
         $shell = new Shell($config);
@@ -91,32 +84,18 @@ class ShellTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('/file.php', $includes[0]);
     }
 
-    public function testAddMatchersViaConfig()
-    {
-        $config = $this->getConfig(array(
-            'tabCompletionMatchers' => array(
-                new ClassMethodsMatcher(),
-            ),
-        ));
-
-        $matchers = $config->getTabCompletionMatchers();
-
-        $this->assertTrue(array_pop($matchers) instanceof ClassMethodsMatcher);
-    }
-
     public function testRenderingExceptions()
     {
-        $shell  = new Shell($this->getConfig());
+        $shell  = new Shell;
         $output = $this->getOutput();
         $stream = $output->getStream();
         $e      = new ParseErrorException('message', 13);
 
-        $shell->setOutput($output);
         $shell->addCode('code');
         $this->assertTrue($shell->hasCode());
         $this->assertNotEmpty($shell->getCodeBuffer());
 
-        $shell->writeException($e);
+        $shell->renderException($e, $output);
 
         $this->assertSame($e, $shell->getScopeVariable('_e'));
         $this->assertFalse($shell->hasCode());
@@ -132,7 +111,7 @@ class ShellTest extends \PHPUnit_Framework_TestCase
 
     public function testHandlingErrors()
     {
-        $shell  = new Shell($this->getConfig());
+        $shell  = new Shell;
         $output = $this->getOutput();
         $stream = $output->getStream();
         $shell->setOutput($output);
@@ -157,11 +136,11 @@ class ShellTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Psy\Exception\ErrorException
+     * @expectedException Psy\Exception\ErrorException
      */
     public function testNotHandlingErrors()
     {
-        $shell    = new Shell($this->getConfig());
+        $shell    = new Shell;
         $oldLevel = error_reporting();
         error_reporting($oldLevel | E_USER_NOTICE);
 
@@ -175,7 +154,7 @@ class ShellTest extends \PHPUnit_Framework_TestCase
 
     public function testVersion()
     {
-        $shell = new Shell($this->getConfig());
+        $shell = new Shell;
 
         $this->assertInstanceOf('Symfony\Component\Console\Application', $shell);
         $this->assertContains(Shell::VERSION, $shell->getVersion());
@@ -185,7 +164,7 @@ class ShellTest extends \PHPUnit_Framework_TestCase
 
     public function testCodeBuffer()
     {
-        $shell = new Shell($this->getConfig());
+        $shell = new Shell;
 
         $shell->addCode('class');
         $this->assertNull($shell->flushCode());
@@ -200,12 +179,12 @@ class ShellTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($shell->hasCode());
         $code = preg_replace('/\s+/', ' ', $code);
         $this->assertNotNull($code);
-        $this->assertEquals('class a { } return new \\Psy\\CodeCleaner\\NoReturnValue();', $code);
+        $this->assertEquals('class a { }', $code);
     }
 
     public function testKeepCodeBufferOpen()
     {
-        $shell = new Shell($this->getConfig());
+        $shell = new Shell;
 
         $shell->addCode('1 \\');
         $this->assertNull($shell->flushCode());
@@ -228,19 +207,8 @@ class ShellTest extends \PHPUnit_Framework_TestCase
      */
     public function testCodeBufferThrowsParseExceptions()
     {
-        $shell = new Shell($this->getConfig());
+        $shell = new Shell;
         $shell->addCode('this is not valid');
-        $shell->flushCode();
-    }
-
-    public function testClosuresSupport()
-    {
-        $shell = new Shell($this->getConfig());
-        $code = '$test = function () {}';
-        $shell->addCode($code);
-        $shell->flushCode();
-        $code = '$test()';
-        $shell->addCode($code);
         $shell->flushCode();
     }
 
@@ -248,7 +216,7 @@ class ShellTest extends \PHPUnit_Framework_TestCase
     {
         $output = $this->getOutput();
         $stream = $output->getStream();
-        $shell  = new Shell($this->getConfig());
+        $shell  = new Shell;
         $shell->setOutput($output);
 
         $shell->writeStdout("{{stdout}}\n");
@@ -256,14 +224,14 @@ class ShellTest extends \PHPUnit_Framework_TestCase
         rewind($stream);
         $streamContents = stream_get_contents($stream);
 
-        $this->assertEquals('{{stdout}}' . PHP_EOL, $streamContents);
+        $this->assertEquals('{{stdout}}'.PHP_EOL, $streamContents);
     }
 
     public function testWriteStdoutWithoutNewline()
     {
         $output = $this->getOutput();
         $stream = $output->getStream();
-        $shell  = new Shell($this->getConfig());
+        $shell  = new Shell;
         $shell->setOutput($output);
 
         $shell->writeStdout('{{stdout}}');
@@ -271,7 +239,7 @@ class ShellTest extends \PHPUnit_Framework_TestCase
         rewind($stream);
         $streamContents = stream_get_contents($stream);
 
-        $this->assertEquals('{{stdout}}<aside>⏎</aside>' . PHP_EOL, $streamContents);
+        $this->assertEquals('{{stdout}}<aside>⏎</aside>'.PHP_EOL, $streamContents);
     }
 
     /**
@@ -281,7 +249,7 @@ class ShellTest extends \PHPUnit_Framework_TestCase
     {
         $output = $this->getOutput();
         $stream = $output->getStream();
-        $shell  = new Shell($this->getConfig());
+        $shell  = new Shell;
         $shell->setOutput($output);
 
         $shell->writeReturnValue($input);
@@ -292,8 +260,8 @@ class ShellTest extends \PHPUnit_Framework_TestCase
     public function getReturnValues()
     {
         return array(
-            array('{{return value}}', "=> \"\033[32m{{return value}}\033[39m\"" . PHP_EOL),
-            array(1, "=> \033[35m1\033[39m" . PHP_EOL),
+            array('{{return value}}', '=> <return>"{{return value}}"</return>'.PHP_EOL),
+            array(1, '=> <return>1</return>'.PHP_EOL),
         );
     }
 
@@ -304,7 +272,7 @@ class ShellTest extends \PHPUnit_Framework_TestCase
     {
         $output = $this->getOutput();
         $stream = $output->getStream();
-        $shell  = new Shell($this->getConfig());
+        $shell  = new Shell;
         $shell->setOutput($output);
 
         $shell->writeException($exception);
@@ -315,7 +283,7 @@ class ShellTest extends \PHPUnit_Framework_TestCase
     public function getRenderedExceptions()
     {
         return array(
-            array(new \Exception('{{message}}'), "Exception with message '{{message}}'" . PHP_EOL),
+            array(new \Exception('{{message}}'), "Exception with message '{{message}}'".PHP_EOL),
         );
     }
 
@@ -327,20 +295,5 @@ class ShellTest extends \PHPUnit_Framework_TestCase
         $output = new StreamOutput($stream, StreamOutput::VERBOSITY_NORMAL, false);
 
         return $output;
-    }
-
-    private function getConfig(array $config = array())
-    {
-        // Mebbe there's a better way than this?
-        $dir = tempnam(sys_get_temp_dir(), 'psysh_shell_test_');
-        unlink($dir);
-
-        $defaults = array(
-            'configDir'  => $dir,
-            'dataDir'    => $dir,
-            'runtimeDir' => $dir,
-        );
-
-        return new Configuration(array_merge($defaults, $config));
     }
 }

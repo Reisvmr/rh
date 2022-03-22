@@ -1,9 +1,9 @@
 <?php
 
 /*
- * This file is part of Psy Shell.
+ * This file is part of Psy Shell
  *
- * (c) 2012-2017 Justin Hileman
+ * (c) 2012-2014 Justin Hileman
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -17,7 +17,7 @@ class TransientTest extends \PHPUnit_Framework_TestCase
 {
     public function testHistory()
     {
-        $readline = new Transient();
+        $readline = new Transient;
         $this->assertEmpty($readline->listHistory());
         $readline->addHistory('foo');
         $this->assertEquals(array('foo'), $readline->listHistory());
@@ -68,7 +68,7 @@ class TransientTest extends \PHPUnit_Framework_TestCase
 
     public function testSomeThingsAreAlwaysTrue()
     {
-        $readline = new Transient();
+        $readline = new Transient;
         $this->assertTrue(Transient::isSupported());
         $this->assertTrue($readline->readHistory());
         $this->assertTrue($readline->writeHistory());

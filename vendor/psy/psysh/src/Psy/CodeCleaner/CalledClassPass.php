@@ -1,9 +1,9 @@
 <?php
 
 /*
- * This file is part of Psy Shell.
+ * This file is part of Psy Shell
  *
- * (c) 2012-2017 Justin Hileman
+ * (c) 2012-2014 Justin Hileman
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,12 +11,12 @@
 
 namespace Psy\CodeCleaner;
 
-use PhpParser\Node;
-use PhpParser\Node\Expr\ConstFetch;
-use PhpParser\Node\Expr\FuncCall;
-use PhpParser\Node\Name;
-use PhpParser\Node\Stmt\Class_;
-use PhpParser\Node\Stmt\Trait_;
+use PHPParser_Node as Node;
+use PHPParser_Node_Expr_ConstFetch as ConstFetch;
+use PHPParser_Node_Expr_FuncCall as FunctionCall;
+use PHPParser_Node_Name as Name;
+use PHPParser_Node_Stmt_Class as ClassStmt;
+use PHPParser_Node_Stmt_Trait as TraitStmt;
 use Psy\Exception\ErrorException;
 
 /**
@@ -42,13 +42,14 @@ class CalledClassPass extends CodeCleanerPass
      */
     public function enterNode(Node $node)
     {
-        if ($node instanceof Class_ || $node instanceof Trait_) {
+        if ($node instanceof ClassStmt || $node instanceof TraitStmt) {
             $this->inClass = true;
-        } elseif ($node instanceof FuncCall && !$this->inClass) {
+        } elseif ($node instanceof FunctionCall && !$this->inClass) {
+
             // We'll give any args at all (besides null) a pass.
             // Technically we should be checking whether the args are objects, but this will do for now.
             //
-            // @todo switch this to actually validate args when we get context-aware code cleaner passes.
+            // TODO: switch this to actually validate args when we get context-aware code cleaner passes.
             if (!empty($node->args) && !$this->isNull($node->args[0])) {
                 return;
             }
@@ -71,7 +72,7 @@ class CalledClassPass extends CodeCleanerPass
      */
     public function leaveNode(Node $node)
     {
-        if ($node instanceof Class_) {
+        if ($node instanceof ClassStmt) {
             $this->inClass = false;
         }
     }

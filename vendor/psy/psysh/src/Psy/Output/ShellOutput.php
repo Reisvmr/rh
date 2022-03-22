@@ -1,9 +1,9 @@
 <?php
 
 /*
- * This file is part of Psy Shell.
+ * This file is part of Psy Shell
  *
- * (c) 2012-2017 Justin Hileman
+ * (c) 2012-2014 Justin Hileman
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,7 +11,6 @@
 
 namespace Psy\Output;
 
-use Symfony\Component\Console\Formatter\OutputFormatterInterface;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
@@ -29,7 +28,7 @@ class ShellOutput extends ConsoleOutput
      * Construct a ShellOutput instance.
      *
      * @param mixed                    $verbosity (default: self::VERBOSITY_NORMAL)
-     * @param bool                     $decorated (default: null)
+     * @param boolean                  $decorated (default: null)
      * @param OutputFormatterInterface $formatter (default: null)
      * @param null|string|OutputPager  $pager     (default: null)
      */
@@ -46,7 +45,7 @@ class ShellOutput extends ConsoleOutput
         } elseif ($pager instanceof OutputPager) {
             $this->pager = $pager;
         } else {
-            throw new \InvalidArgumentException('Unexpected pager parameter: ' . $pager);
+            throw new \InvalidArgumentException('Unexpected pager parameter: '.$pager);
         }
     }
 
@@ -60,8 +59,8 @@ class ShellOutput extends ConsoleOutput
      *
      * Upon completion, the output pager is flushed.
      *
-     * @param string|array|\Closure $messages A string, array of strings or a callback
-     * @param int                   $type     (default: 0)
+     * @param string|array|Closure $messages A string, array of strings or a callback.
+     * @param int                  $type     (default: 0)
      */
     public function page($messages, $type = 0)
     {
@@ -110,12 +109,12 @@ class ShellOutput extends ConsoleOutput
      * @throws \InvalidArgumentException When unknown output type is given
      *
      * @param string|array $messages The message as an array of lines or a single string
-     * @param bool         $newline  Whether to add a newline or not
-     * @param int          $type     The type of output
+     * @param Boolean      $newline  Whether to add a newline or not
+     * @param integer      $type     The type of output
      */
     public function write($messages, $newline = false, $type = 0)
     {
-        if ($this->getVerbosity() === self::VERBOSITY_QUIET) {
+        if ($this->getVerbosity() == self::VERBOSITY_QUIET) {
             return;
         }
 
@@ -145,8 +144,8 @@ class ShellOutput extends ConsoleOutput
      *
      * Handles paged output, or writes directly to the output stream.
      *
-     * @param string $message A message to write to the output
-     * @param bool   $newline Whether to add a newline or not
+     * @param string  $message A message to write to the output
+     * @param Boolean $newline Whether to add a newline or not
      */
     public function doWrite($message, $newline)
     {
@@ -175,22 +174,20 @@ class ShellOutput extends ConsoleOutput
         $formatter = $this->getFormatter();
 
         $formatter->setStyle('warning', new OutputFormatterStyle('black', 'yellow'));
-        $formatter->setStyle('error',   new OutputFormatterStyle('black', 'red', array('bold')));
         $formatter->setStyle('aside',   new OutputFormatterStyle('blue'));
-        $formatter->setStyle('strong',  new OutputFormatterStyle(null, null, array('bold')));
+        $formatter->setStyle('strong',  new OutputFormatterStyle('white', null, array('bold')));
         $formatter->setStyle('return',  new OutputFormatterStyle('cyan'));
         $formatter->setStyle('urgent',  new OutputFormatterStyle('red'));
         $formatter->setStyle('hidden',  new OutputFormatterStyle('black'));
 
         // Visibility
-        $formatter->setStyle('public',    new OutputFormatterStyle(null, null, array('bold')));
+        $formatter->setStyle('public',    new OutputFormatterStyle('white', null, array('bold')));
         $formatter->setStyle('protected', new OutputFormatterStyle('yellow'));
         $formatter->setStyle('private',   new OutputFormatterStyle('red'));
         $formatter->setStyle('global',    new OutputFormatterStyle('cyan', null, array('bold')));
         $formatter->setStyle('const',     new OutputFormatterStyle('cyan'));
         $formatter->setStyle('class',     new OutputFormatterStyle('blue', null, array('underscore')));
-        $formatter->setStyle('function',  new OutputFormatterStyle(null));
-        $formatter->setStyle('default',   new OutputFormatterStyle(null));
+        $formatter->setStyle('function',  new OutputFormatterStyle('white'));
 
         // Types
         $formatter->setStyle('number',   new OutputFormatterStyle('magenta'));

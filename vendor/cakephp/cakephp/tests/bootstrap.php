@@ -1,14 +1,14 @@
 <?php
 /**
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @copyright     Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 
 use Cake\Cache\Cache;
@@ -131,6 +131,7 @@ Date::setTestNow(Date::now());
 MutableDate::setTestNow(MutableDate::now());
 
 ini_set('intl.default_locale', 'en_US');
+ini_set('session.gc_divisor', '1');
 
 if (class_exists('PHPUnit_Runner_Version')) {
     class_alias('PHPUnit_Framework_TestResult', 'PHPUnit\Framework\TestResult');

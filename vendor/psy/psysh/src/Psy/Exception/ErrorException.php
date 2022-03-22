@@ -1,9 +1,9 @@
 <?php
 
 /*
- * This file is part of Psy Shell.
+ * This file is part of Psy Shell
  *
- * (c) 2012-2017 Justin Hileman
+ * (c) 2012-2014 Justin Hileman
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -28,12 +28,12 @@ class ErrorException extends \ErrorException implements Exception
      * @param int       $lineno   (default: null)
      * @param Exception $previous (default: null)
      */
-    public function __construct($message = '', $code = 0, $severity = 1, $filename = null, $lineno = null, $previous = null)
+    public function __construct($message = "", $code = 0, $severity = 1, $filename = null, $lineno = null, $previous = null)
     {
         $this->rawMessage = $message;
 
         if (!empty($filename) && preg_match('{Psy[/\\\\]ExecutionLoop}', $filename)) {
-            $filename = '';
+            $filename = null;
         }
 
         switch ($severity) {
@@ -53,7 +53,7 @@ class ErrorException extends \ErrorException implements Exception
                 break;
         }
 
-        $message = sprintf('PHP %s:  %s%s on line %d', $type, $message, $filename ? ' in ' . $filename : '', $lineno);
+        $message = sprintf('PHP %s:  %s %s%son line %d', $type, $message, $filename ? 'on ' : '', $filename, $lineno);
         parent::__construct($message, $code, $severity, $filename, $lineno, $previous);
     }
 
@@ -74,27 +74,15 @@ class ErrorException extends \ErrorException implements Exception
      *
      *     set_error_handler(array('Psy\Exception\ErrorException', 'throwException'));
      *
-     * @throws ErrorException
-     *
      * @param int    $errno   Error type
      * @param string $errstr  Message
      * @param string $errfile Filename
      * @param int    $errline Line number
+     *
+     * @return void
      */
     public static function throwException($errno, $errstr, $errfile, $errline)
     {
-        throw new self($errstr, 0, $errno, $errfile, $errline);
-    }
-
-    /**
-     * Create an ErrorException from an Error.
-     *
-     * @param \Error $e
-     *
-     * @return ErrorException
-     */
-    public static function fromError(\Error $e)
-    {
-        return new self($e->getMessage(), $e->getCode(), 1, $e->getFile(), $e->getLine(), $e);
+        throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
     }
 }
